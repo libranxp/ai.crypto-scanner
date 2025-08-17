@@ -27,14 +27,13 @@
   <div class="signal-list" id="signalList"></div>
 
   <script>
-    const API_URL = "https://your-backend-url.onrender.com/signals"; // Update to your live backend
+    const API_URL = "https://your-render-backend-url/signals"; // Replace with your Render or backend URL
 
     async function fetchSignals() {
       try {
         const res = await fetch(API_URL);
-        if (!res.ok) throw new Error("Network response not ok");
-        const signals = await res.json();
-        return signals;
+        if (!res.ok) throw new Error("Network response was not ok");
+        return await res.json();
       } catch (e) {
         console.error("Failed to fetch signals:", e);
         return [];
@@ -74,9 +73,7 @@
       renderSignals(signals);
     }
 
-    document.getElementById("scanButton").addEventListener("click", () => {
-      refreshSignals();
-    });
+    document.getElementById("scanButton").addEventListener("click", refreshSignals);
 
     refreshSignals();
   </script>
