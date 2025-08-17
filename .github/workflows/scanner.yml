@@ -1,0 +1,36 @@
+name: Crypto Scanner
+
+on:
+  schedule:
+    # Runs at 08:00, 08:45, ..., 21:00 BST (UK is UTC+1 in summer, adjust if needed)
+    - cron: '0,45 7-20 * * *' # UTC time (UTC=BST-1h)
+  workflow_dispatch: # for manual runs
+
+jobs:
+  run-scanner:
+    runs-on: ubuntu-latest
+
+    env:
+      COINMARKETCAP_API_KEY: ${{ secrets.COINMARKETCAP_API_KEY }}
+      TAAPI_API_KEY: ${{ secrets.TAAPI_API_KEY }}
+      CRYPTOPANIC_API_KEY: ${{ secrets.CRYPTOPANIC_API_KEY }}
+      COINMARKETCAL_API_KEY: ${{ secrets.COINMARKETCAL_API_KEY }}
+      REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
+      REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.10
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run scanner
+        run: python main.py
