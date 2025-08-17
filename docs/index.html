@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Crypto Signal Dashboard</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; background: #f7f7f7; }
+    h1 { margin-bottom: 20px; }
+    #scanButton { margin-bottom: 20px; padding: 10px 20px; font-size: 16px; }
+    .signal-list { display: flex; flex-wrap: wrap; gap: 20px; }
+    .card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
+      padding: 15px;
+      width: 320px;
+    }
+    a { color: #1a73e8; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    small { color: gray; }
+  </style>
+</head>
+<body>
+  <h1>Crypto Signal Dashboard</h1>
+  <button id="scanButton">Refresh Signals</button>
+  <div class="signal-list" id="signalList"></div>
+
+  <script>
+    const API_URL = "https://your-backend-domain.com/signals"; // Change to your Flask backend URL
+
+    async function fetchSignals() {
+      try {
+        const res = await fetch(API_URL);
+        if (!res.ok) throw new Error("Network response not ok");
+        const signals = await res.json();
+        return signals;
+      } catch (e) {
+        console.error("Failed to fetch signals:", e);
+        return [];
+      }
+    }
+
+    function renderSignals(signals) {
+      const container = document.getElementById("signalList");
+      container.innerHTML = "";
+      if (signals.length === 0) {
+        container.innerHTML = "<p>No signals available.</p>";
+        return;
+      }
+      signals.forEach(sig => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <h2>${sig.ticker} <small>(${sig.ai_score}/100)</small></h2>
+          <p>Price: $${sig.price.toFixed(2)}</p>
+          <p>RSI: ${sig.technicals.rsi}</p>
+          <p>Mentions: ${sig.sentiment.mentions}</p>
+          <p>${sig.validation}</p>
+          <p>TP: $${sig.risk_management.tp.toFixed(2)} | SL: $${sig.risk_management.sl.toFixed(2)}</p>
+          <p>
+            <a href="${sig.links.chart}" target="_blank" rel="noreferrer">Chart</a> | 
+            <a href="${sig.links.news}" target="_blank" rel="noreferrer">News</a> | 
+            <a href="${sig.links.catalyst}" target="_blank" rel="noreferrer">Catalyst</a>
+          </p>
+          <small>${sig.timestamp}</small>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    async function refreshSignals() {
+      const signals = await fetchSignals();
+      renderSignals(signals);
+    }
+
+    document.getElementById("scanButton").addEventListener("click", () => {
+      refreshSignals();
+    });
+
+    // Initial load
+    refreshSignals();
+  </script>
+</body>
+</html>
