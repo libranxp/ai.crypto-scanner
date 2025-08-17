@@ -27,7 +27,7 @@
   <div class="signal-list" id="signalList"></div>
 
   <script>
-    const API_URL = "https://your-backend-domain.com/signals"; // Change to your Flask backend URL
+    const API_URL = "https://your-backend-url.onrender.com/signals"; // Update to your live backend
 
     async function fetchSignals() {
       try {
@@ -78,7 +78,6 @@
       refreshSignals();
     });
 
-    // Initial load
     refreshSignals();
   </script>
 </body>
