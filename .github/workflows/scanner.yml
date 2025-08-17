@@ -2,7 +2,8 @@ name: Crypto Scanner
 
 on:
   schedule:
-    - cron: '0,45 7-20 * * *' # Runs at 08:00, 08:45, ..., 21:00 BST (UTC adjusted)
+    # Runs every 45 minutes from 08:00 to 21:00 BST (UTC adjusted)
+    - cron: '0,45 7-20 * * *'
   workflow_dispatch:
 
 jobs:
@@ -21,14 +22,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up Python
+      - name: Set up Python 3.10
         uses: actions/setup-python@v4
         with:
-          python-version: 3.10
+          python-version: "3.10"
 
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Run Scanner & Send Alerts
+      - name: Run scanner & send alerts
         run: python app.py
- 
