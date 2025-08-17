@@ -5,6 +5,7 @@ from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
+# Environment variables from GitHub Secrets / Render
 CMC_KEY = os.getenv("COINMARKETCAP_API_KEY")
 TAAPI_KEY = os.getenv("TAAPI_API_KEY")
 CRYPTOPANIC_KEY = os.getenv("CRYPTOPANIC_API_KEY")
@@ -18,11 +19,8 @@ current_signals = []
 
 def get_cryptos():
     url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest"
-    params = {
-        "limit": 200,
-        "convert": "USD"
-    }
     headers = {"X-CMC_PRO_API_KEY": CMC_KEY}
+    params = {"limit": 200, "convert": "USD"}
     try:
         r = requests.get(url, headers=headers, params=params)
         r.raise_for_status()
@@ -50,8 +48,7 @@ def get_ta(ticker):
     try:
         r = requests.get(url, params=params)
         r.raise_for_status()
-        rsi = r.json().get("value")
-        return {"rsi": rsi}
+        return {"rsi": r.json().get("value")}
     except Exception as e:
         print(f"TAAPI error for {ticker}: {e}")
         return None
@@ -215,5 +212,5 @@ def home():
     return "Crypto Scanner API Running"
 
 if __name__ == "__main__":
-    scan()  # initial scan on start
+    scan()  # run scan on app start
     app.run(host="0.0.0.0", port=8000)
